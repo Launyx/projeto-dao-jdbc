@@ -59,19 +59,11 @@ public class SellerDaoJDBC implements SellerDao {
              algum resultado como retorno
              */
             if (rs.next()){
-                // Instanciação do departamento que todo Seller tem
-                Department dep = new Department();
-                dep.setId(rs.getInt("DepartmentId"));
-                dep.setName(rs.getString("DepName"));
+                // Chamanda do método que instancia um Department
+                Department dep = instantiateDepartment(rs);
 
-                // Instaciação do Seller
-                Seller obj = new Seller();
-                obj.setId(rs.getInt("iD"));
-                obj.setName(rs.getString("Name"));
-                obj.setEmail(rs.getString("Email"));
-                obj.setBaseSalary(rs.getDouble("BaseSalary"));
-                obj.setBirthDate(rs.getDate("BirthDate"));
-                obj.setDepartment(dep);
+                // Chamanda do método que instancia um Seller
+                Seller obj = instantiateSeller(rs, dep);
                 return obj;
             }
             // Retorna nulo caso não houver retorno de objeto (não há seller com a consulta determinada)
@@ -83,6 +75,30 @@ public class SellerDaoJDBC implements SellerDao {
             DB.closeStatement(st);
             DB.closeResultSet(rs);
         }
+    }
+
+    /* Possível excessão de .gets propagadas com "throws SQLException" pois,
+        O código que chama esse método já está tratando uma possível SQLException
+    */
+    private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException{
+        Seller obj = new Seller();
+        obj.setId(rs.getInt("iD"));
+        obj.setName(rs.getString("Name"));
+        obj.setEmail(rs.getString("Email"));
+        obj.setBaseSalary(rs.getDouble("BaseSalary"));
+        obj.setBirthDate(rs.getDate("BirthDate"));
+        obj.setDepartment(dep);
+        return obj;
+    }
+
+    /* Possível excessão de .gets propagadas com "throws SQLException" pois,
+        O código que chama esse método já está tratando uma possível SQLException
+    */
+    private Department instantiateDepartment(ResultSet rs) throws SQLException{
+        Department dep = new Department();
+        dep.setId(rs.getInt("DepartmentId"));
+        dep.setName(rs.getString("DepName"));
+        return dep;
     }
 
     @Override
