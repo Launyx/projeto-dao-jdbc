@@ -106,7 +106,57 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public List<Seller> findAll() {
-        return List.of();
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try{
+            // Implementação da consulta (statement) no bando de dados
+            st = conn.prepareStatement(
+                    "SELECT seller.*, department.Name as DepName "
+                            + "FROM seller INNER JOIN department "
+                            + "ON seller.DepartmentId = department.Id "
+                            + "ORDER BY Name ");
+
+            // Execução da consulta (statement) no banco e armazenamento da tabela resultante na variável rs (ResultSet)
+            rs = st.executeQuery();
+
+            List<Seller> list = new ArrayList<>();
+
+            Map<Integer, Department> map = new HashMap<>();
+
+            /* Quando é executada uma consulta (statement) e o resultado é colocado em um ResultSet, este rs aponta
+             para a posição 0, que não contém objeto. Por isso é utilizado um if com rs.next() para testar se houve
+             algum resultado como retorno
+             */
+            while (rs.next()){
+
+                // Procurando no map instanciado, se há algum objeto Department com a chave do DepartmentId
+                Department dep = map.get(rs.getInt("DepartmentId"));
+
+                if (dep == null){
+                    // Chamanda do método que instancia um Department
+                    dep = instantiateDepartment(rs);
+
+                    /*  Alocando o departamento instanciado no map, para evitar a criação de múltiplos departamentos
+                        com mesmo ID */
+
+                    map.put(rs.getInt("DepartmentId"), dep);
+                }
+
+                // Chamanda do método que instancia um Seller
+                Seller obj = instantiateSeller(rs, dep);
+
+                list.add(obj);
+
+            }
+            return list;
+        }catch (SQLException e){
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
+        }
     }
 
     @Override
