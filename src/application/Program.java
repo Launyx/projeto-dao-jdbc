@@ -42,5 +42,12 @@ public class Program {
         for (Seller obj : list){
             System.out.println(obj);
         }
+
+        System.out.println("\n=== TEST 5 seller update: ===");
+        seller = sellerDao.findById(1);
+        seller.setName("Martha Waine");
+        sellerDao.update(seller);
+        System.out.println("Update completed");
+
     }
 }
