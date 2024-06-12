@@ -196,9 +196,9 @@ public class SellerDaoJDBC implements SellerDao {
             // Implementação da consulta (statement) no bando de dados
             st = conn.prepareStatement(
                     "SELECT seller.*, department.Name as DepName "
-                            + "FROM seller INNER JOIN department "
-                            + "ON seller.DepartmentId = department.Id "
-                            + "ORDER BY Name ");
+                    + "FROM seller INNER JOIN department "
+                    + "ON seller.DepartmentId = department.Id "
+                    + "ORDER BY Name ");
 
             // Execução da consulta (statement) no banco e armazenamento da tabela resultante na variável rs (ResultSet)
             rs = st.executeQuery();
@@ -207,10 +207,6 @@ public class SellerDaoJDBC implements SellerDao {
 
             Map<Integer, Department> map = new HashMap<>();
 
-            /* Quando é executada uma consulta (statement) e o resultado é colocado em um ResultSet, este rs aponta
-             para a posição 0, que não contém objeto. Por isso é utilizado um if com rs.next() para testar se houve
-             algum resultado como retorno
-             */
             while (rs.next()){
 
                 // Procurando no map instanciado, se há algum objeto Department com a chave do DepartmentId
